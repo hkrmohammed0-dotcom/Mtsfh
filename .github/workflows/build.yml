@@ -1,0 +1,24 @@
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential libffi-dev libssl-dev python3-dev
+          pip install buildozer cython==0.29.33
+      - name: Build APK
+        run: |
+          yes | buildozer -v android debug
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: wifi-system-apk
+          path: bin/*.apk
